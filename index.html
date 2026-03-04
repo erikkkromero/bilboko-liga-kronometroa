@@ -1,10 +1,11 @@
 <!DOCTYPE html>
+
 <html lang="eu">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Eztabaidako Kronometroa</title>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Eztabaidako Kronometroa</title>
+<style>
     body {
       margin: 0;
       padding: 0;
@@ -61,25 +62,26 @@
   </style>
 </head>
 <body>
-  <div id="timer">00:00</div>
-
-  <div class="controls">
-    <select id="presetSelect">
-      <option value="180">SARRERA</option>
-      <option value="240">1. EZEZTAPENA</option>
-      <option value="240">2. EZEZTAPENA</option>
-      <option value="180">ONDORIOAK</option>
-    </select>
-    <button onclick="startTimer()">Hasi</button>
-    <button onclick="resetTimer()">Berrezarri</button>
-  </div>
-
-  <script>
+<div id="timer">00:00</div>
+<div class="controls">
+<select id="presetSelect">
+<option value="180">SARRERA</option>
+<option value="240">1. EZEZTAPENA</option>
+<option value="240">2. EZEZTAPENA</option>
+<option value="180">ONDORIOAK</option>
+</select>
+<button onclick="startTimer()">Hasi</button><button id="pauseBtn" onclick="togglePause()">Pausatu</button>
+    
+<button onclick="resetTimer()">Berrezarri</button>
+</div>
+<script>
     let time = 0;
     let interval;
+    let isPaused = false;
 
     const timerDisplay = document.getElementById('timer');
     const presetSelect = document.getElementById('presetSelect');
+    const pauseBtn = document.getElementById('pauseBtn');
 
     presetSelect.addEventListener('change', () => {
       resetTimer();
@@ -94,7 +96,14 @@
     }
 
     function startTimer() {
+      // If already running, do nothing
       if (interval) return;
+
+      // If we were paused, switch button back to "Pausatu"
+      if (isPaused) {
+        isPaused = false;
+        if (pauseBtn) pauseBtn.textContent = 'Pausatu';
+      }
 
       interval = setInterval(() => {
         if (time > 0) {
@@ -107,9 +116,28 @@
       }, 1000);
     }
 
+    // Toggle pause/resume
+    function togglePause() {
+      // If running -> pause
+      if (interval) {
+        clearInterval(interval);
+        interval = null;
+        isPaused = true;
+        if (pauseBtn) pauseBtn.textContent = 'Jarraitu';
+        return;
+      }
+
+      // If paused -> resume
+      if (isPaused && time > 0) {
+        startTimer();
+      }
+    }
+
     function resetTimer() {
       clearInterval(interval);
       interval = null;
+      isPaused = false;
+      if (pauseBtn) pauseBtn.textContent = 'Pausatu';
       time = parseInt(presetSelect.value);
       updateDisplay();
     }
@@ -117,6 +145,7 @@
     // Inicializar
     time = parseInt(presetSelect.value);
     updateDisplay();
-  </script>
+</script>
 </body>
 </html>
+
