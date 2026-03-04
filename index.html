@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Eztabaidako Kronometroa</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-image: url('fondo.jpg'); /* Cambia esto por la imagen que quieras */
+      background-size: cover;
+      background-position: center;
+      font-family: Arial, sans-serif;
+      color: white;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #timer {
+      font-size: 5rem;
+      background-color: rgba(0, 0, 0, 0.6);
+      padding: 30px 60px;
+      border-radius: 30px;
+      border: 2px solid white;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+      margin-bottom: 30px;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    button, select {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border-radius: 10px;
+      border: none;
+      cursor: pointer;
+    }
+
+    select {
+      background-color: white;
+      color: black;
+    }
+
+    button {
+      background-color: #444;
+      color: white;
+    }
+
+    button:hover, select:hover {
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div id="timer">00:00</div>
+
+  <div class="controls">
+    <select id="presetSelect">
+      <option value="180">SARRERA</option>
+      <option value="240">1. EZEZTAPENA</option>
+      <option value="240">2. EZEZTAPENA</option>
+      <option value="180">ONDORIOAK</option>
+    </select>
+    <button onclick="startTimer()">Hasi</button>
+    <button onclick="resetTimer()">Berrezarri</button>
+  </div>
+
+  <script>
+    let time = 0;
+    let interval;
+
+    const timerDisplay = document.getElementById('timer');
+    const presetSelect = document.getElementById('presetSelect');
+
+    presetSelect.addEventListener('change', () => {
+      resetTimer();
+      time = parseInt(presetSelect.value);
+      updateDisplay();
+    });
+
+    function updateDisplay() {
+      const minutes = Math.floor(time / 60);
+      const seconds = time % 60;
+      timerDisplay.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function startTimer() {
+      if (interval) return;
+
+      interval = setInterval(() => {
+        if (time > 0) {
+          time--;
+          updateDisplay();
+        } else {
+          clearInterval(interval);
+          interval = null;
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      clearInterval(interval);
+      interval = null;
+      time = parseInt(presetSelect.value);
+      updateDisplay();
+    }
+
+    // Inicializar
+    time = parseInt(presetSelect.value);
+    updateDisplay();
+  </script>
+</body>
+</html>
